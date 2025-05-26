@@ -2,7 +2,7 @@
 
 A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.2](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_2/) models to the [hugging face hub](https://huggingface.co/models). This tool automatically converts from  original Llama checkpoint format to huggingface-compatible format with full tokenizer support.
 
-## ✨ Features
+## ✨ features
 
 - 🔄 **Automatic Format Conversion**: Converts Llama checkpoint format to HuggingFace format
 - 🎯 **Smart Tokenizer Handling**: Works with or without SentencePiece (this library has some issues in ARM-based Apple systems), includes fallback mechanisms
@@ -14,21 +14,21 @@ A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.
 - 🛡️ **Error Resilience**: Comprehensive error handling and fallback strategies
 - ⚡ **UV-Powered**: Uses UV for fast, reliable dependency management
 
-## 🚀 Quick Start
+## 🚀 quick start
 
-### Installation with [uv](https://huggingface.co/models) (recommended)
+### installation with [uv](https://huggingface.co/models) (recommended)
 
-0. Install `uv` if you haven't already
+#### 0. install `uv` if you haven't already
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-1. Clone this repository
+#### 1. clone this repository
 ```
 git clone https://github.com/juanmvsa/nlp-scripts/tree/main/llama3-2-model-uploader
 ```
 
-2. Create the virtual environment 
+#### 2. create the virtual environment 
 ```
 cd llama3-2-model-uploader
 ```
@@ -45,36 +45,36 @@ source .venv/bin/activate  # on windows: .venv\Scripts\activate
 uv pip install -e .
 ```
 
-3. Install the necessary dependencies
-
-Install with optional dependencies
+#### 3. install with optional dependencies
 ```
 uv pip install -e ".[all]"  # includes accelerate and sentencepiece
 ```
 
-Set your `huggingface` token
+#### 4. set your `huggingface` token
 ```
 export HF_TOKEN=your_huggingface_token_here
 ```
 
-### Alternative Installation Methods
+### alternative installation methods
 
-Install without `sentencepiece` (in case of build issues)
+#### install without `sentencepiece` (in case of build issues)
 ```bash
 uv pip install -e ".[accelerate]"
 ```
 
-Development installation
+#### development installation
 ```
 uv pip install -e ".[dev]"
 ```
 
-Install specific extras
+#### install specific extras
 ```
 uv pip install -e ".[sentencepiece,accelerate]"
 ```
 
-### Basic Usage
+---
+
+### basic usage
 
 #### Using the installed command
 
@@ -92,7 +92,7 @@ uv run python upload_model.py \
   --repo_name your-username/your-model-name
 ```
 
-### Full Example
+### Full example
 
 ```bash
 llama3-2-upload \
@@ -102,7 +102,7 @@ llama3-2-upload \
   --test
 ```
 
-## 📁 Project Structure
+## 📁 Project structure
 
 ```
 llama3-2-model-uploader/
@@ -118,7 +118,7 @@ llama3-2-model-uploader/
 
 ## 📋 Requirements
 
-### Input Files (Required)
+### Input files (required)
 
 Your `model` folder must contain:
 
@@ -133,7 +133,7 @@ your_model_folder/
 └── checklist.chk           # optional (ignored during upload)
 ```
 
-### Generated Files
+### Generated files
 
 The tool automatically creates:
 
@@ -144,7 +144,7 @@ The tool automatically creates:
 - `tokenizer.json` - fast tokenizer (when possible)
 - `README.md` - model card with usage instructions
 
-## 🛠️ Command Line Options
+## 🛠️ Command line options
 
 | Option | Description | Required |
 |--------|-------------|----------|
@@ -155,11 +155,11 @@ The tool automatically creates:
 | `--test` | test model loading after upload | ❌ |
 | `--skip_conversion` | skip format conversion | ❌ |
 
-## 🔧 Advanced Usage
+## 🔧 Advanced usage
 
 ### `uv` commands
 
-#### Environment Management
+#### Environment management
 
 0. Create and activate the virtual environment
 ```bash
@@ -209,7 +209,7 @@ uv run llama3-2-upload --model_path ./model --repo_name user/model
 uv run python upload_model.py --model_path ./model --repo_name user/model
 ```
 
-### Environment Variables
+### Environment variables
 
 0. Set your huggingface token
 ```bash
@@ -221,7 +221,7 @@ export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxx
 llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
-### Programmatic Usage
+### Programmatic usage
 
 ```python
 from file_validator import validate_model_files
@@ -237,7 +237,7 @@ if validate_model_files("./my_model"):
     upload_model_to_hf("./my_model", "user/model", "hf_token")
 ```
 
-### Testing Only
+### Testing only
 
 0. Upload without testing
 ```bash
@@ -273,7 +273,7 @@ dependencies = [
 ]
 ```
 
-### Optional Dependencies
+### Optional dependencies
 
 ```toml
 [project.optional-dependencies]
@@ -301,11 +301,11 @@ dev = [
 all = ["llama3-2-model-uploader[accelerate,sentencepiece]"]
 ```
 
-### SentencePiece Installation Issues
+### `sentencepiece` installation issues
 
 If you encounter build errors with `sentencepiece` on MacOS ARM64:
 
-#### Option 1: use conda
+#### option 1: use `conda`
 ```bash
 conda install -c conda-forge sentencepiece
 ```
@@ -325,21 +325,21 @@ brew install protobuf
 uv pip install -e ".[all]"
 ```
 
-#### Option 3: skip `sentencepiece` (the script will use the defined fallbacks)
+#### option 3: skip `sentencepiece` (the script will use the defined fallbacks)
 
 Install without `sentencepiece`
 ```
 uv pip install -e ".[accelerate]"   
 ```
 
-#### Option 4: use the pre-built wheel
+#### option 4: use the pre-built wheel
 ```
 uv pip install sentencepiece --only-binary=sentencepiece
 ```
 
-## 📖 Usage Examples
+## 📖 Usage examples
 
-### Example 1: Basic Upload
+### Example 1: basic upload
 
 ```bash
 # simple upload with default settings
@@ -348,7 +348,7 @@ llama3-2-upload \
   --repo_name myusername/llama32-chatbot
 ```
 
-### Example 2: Private Model with Testing
+### Example 2: private model with testing
 
 ```bash
 # upload private model and test loading
@@ -360,7 +360,7 @@ llama3-2-upload \
   --hf_token hf_xxxxxxxxxxxxxxxxxxxx
 ```
 
-### Example 3: Skip Conversion
+### Example 3: skip conversion
 
 ```bash
 # upload pre-converted model files
@@ -381,7 +381,7 @@ uv run --with llama-model-uploader llama3-2-upload \
 
 ## 🔍 Troubleshooting
 
-### Common Issues
+### Common issues
 
 **❌ "Missing required files"**
 ```bash
@@ -410,12 +410,14 @@ conda install -c conda-forge sentencepiece
 # for very large models, it will copy the first checkpoint instead of merging
 ```
 
-### Debug Mode
+### Debug mode
 
 ```bash
 # run with python's verbose output
 uv run python -v upload_model.py --model_path ./model --repo_name user/model
+```
 
+```
 # check file sizes
 uv run python -c "
 from file_validator import list_model_files, print_file_summary
@@ -423,11 +425,12 @@ files = list_model_files('./your_model')
 print_file_summary('./your_model', files)
 "
 
+```
 # run with uv verbose mode
 uv --verbose pip install -e .
 ```
 
-## 🧪 Testing Your Upload
+## 🧪 Testing your upload
 
 After uploading, test your model:
 
