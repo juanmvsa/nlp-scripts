@@ -30,51 +30,51 @@ curl -lssf https://astral.sh/uv/install.sh | sh
 ```
 
 #### 1. clone this repository
-```
+```bash
 git clone https://github.com/juanmvsa/nlp-scripts/tree/main/llama3-2-model-uploader
 ```
 
 #### 2. create the virtual environment 
-```
+```bash
 cd llama3-2-model-uploader
 ```
 
-```
+```bash
 uv venv
 ```
 
-```
+```bash
 source .venv/bin/activate  # on windows: .venv\scripts\activate
 ```
 
-```
+```bash
 uv pip install -e .
 ```
 
 #### 3. install with optional dependencies
-```
+```bash
 uv pip install -e ".[all]"  # includes accelerate and sentencepiece
 ```
 
 #### 4. set your `huggingface` token
-```
+```bash
 export hf_token=your_huggingface_token_here
 ```
 
 ### → alternative installation methods
 
-#### install without `sentencepiece` (in case of build issues)
+#### ◦ install without `sentencepiece` (in case of build issues)
 ```bash
 uv pip install -e ".[accelerate]"
 ```
 
-#### development installation
-```
+#### ◦ development installation
+```bash
 uv pip install -e ".[dev]"
 ```
 
-#### install specific extras
-```
+#### ◦ install specific extras
+```bash
 uv pip install -e ".[sentencepiece,accelerate]"
 ```
 
@@ -82,24 +82,21 @@ uv pip install -e ".[sentencepiece,accelerate]"
 
 ### → basic usage
 
-#### using the installed command
-
+#### ◦ using the installed command
 ```bash
 llama3-2-upload \
   --model_path ./your_llama32_model \
   --repo_name your-username/your-model-name
 ```
 
-#### or using python directly
-
-```
+#### ◦ or using python directly
+```bash
 uv run python upload_model.py \
   --model_path ./your_llama32_model \
   --repo_name your-username/your-model-name
 ```
 
 ### → full example
-
 ```bash
 llama3-2-upload \
   --model_path ./my_finetuned_llama \
@@ -107,6 +104,7 @@ llama3-2-upload \
   --private \
   --test
 ```
+
 ---
 
 ## 📁 project structure
@@ -172,40 +170,39 @@ the tool automatically creates:
 
 ### → `uv` commands
 
-#### environment management
+#### ◦ environment management
 
-##### create and activate the virtual environment
+##### 0. create and activate the virtual environment
 ```bash
 uv venv
 ```
 
-##### linux/macos
-```
+##### 1. linux/macos
+```bash
 source .venv/bin/activate  
 ```
 
 ##### or (windows)
-```
+```bash
 .venv\scripts\activate
 ```
 
-#### install project in development mode
-
-```
+#### ◦ install project in development mode
+```bash
 uv pip install -e .
 ```
 
-#### install with all optional dependencies
-```
+#### ◦ install with all optional dependencies
+```bash
 uv pip install -e ".[all]"
 ```
 
-#### update dependencies
-```
+#### ◦ update dependencies
+```bash
 uv pip install --upgrade -e .
 ```
 
-#### running the script
+#### ◦ running the script
 
 ##### 0. using the installed command (recommended)
 ```bash
@@ -213,16 +210,16 @@ llama3.2-upload --model_path ./model --repo_name user/model
 ```
 
 ##### 1. using `uv run` (runs in an isolated environment)
-```
+```bash
 uv run llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
 ##### 2. using python directly
-```
+```bash
 uv run python upload_model.py --model_path ./model --repo_name user/model
 ```
 
-#### environment variables
+#### ◦ environment variables
 
 ##### set your `huggingface` token
 ```bash
@@ -230,7 +227,7 @@ export hf_token=hf_xxxxxxxxxxxxxxxxxxxx
 ```
 
 ##### run with the environment token
-```
+```bash
 llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
@@ -258,7 +255,7 @@ llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
 ##### test an existing repository
-```
+```bash
 uv run python -c "
 from model_tester import test_model_loading_full
 test_model_loading_full('user/model', 'your_token')
@@ -319,34 +316,33 @@ all = ["llama3-2-model-uploader[accelerate,sentencepiece]"]
 
 if you encounter build errors with `sentencepiece` on macos arm64:
 
-#### option 1: use `conda`
+#### ◦ option 1: use `conda`
 ```bash
 conda install -c conda-forge sentencepiece
 ```
 
-install without `sentencepiece` extra
-```
+##### install without `sentencepiece` extra
+```bash
 uv pip install -e ".[accelerate]"  # 
 ```
 
-#### option 2: use `homebrew` + `uv`
-
-```
+#### ◦ option 2: use `homebrew` + `uv`
+```bash
 brew install protobuf
 ```
 
-```
+```bash
 uv pip install -e ".[all]"
 ```
 
-#### option 3: skip `sentencepiece` (the script will use the defined fallbacks)
+#### ◦ option 3: skip `sentencepiece` (the script will use the defined fallbacks)
 
-install without `sentencepiece`
+##### install without `sentencepiece`
 ```
 uv pip install -e ".[accelerate]"   
 ```
 
-#### option 4: use the pre-built wheel
+#### ◦ option 4: use the pre-built wheel
 ```
 uv pip install sentencepiece --only-binary=sentencepiece
 ```
@@ -356,7 +352,6 @@ uv pip install sentencepiece --only-binary=sentencepiece
 ## 📖 usage examples
 
 ### → example 1: basic upload
-
 ```bash
 # simple upload with default settings
 llama3-2-upload \
@@ -365,7 +360,6 @@ llama3-2-upload \
 ```
 
 ### → example 2: private model with testing
-
 ```bash
 # upload private model and test loading
 llama3-2-upload \
@@ -377,7 +371,6 @@ llama3-2-upload \
 ```
 
 ### → example 3: skip conversion
-
 ```bash
 # upload pre-converted model files
 llama3-2-upload \
@@ -387,7 +380,6 @@ llama3-2-upload \
 ```
 
 ### → example 4: using `uv run`
-
 ```bash
 # run without installing (uses temporary environment)
 uv run --with llama-model-uploader llama3-2-upload \
@@ -430,13 +422,13 @@ conda install -c conda-forge sentencepiece
 
 ### → debug mode
 
-#### run with python's verbose output
+#### ◦ run with python's verbose output
 ```bash
 uv run python -v upload_model.py --model_path ./model --repo_name user/model
 ```
 
-#### check file sizes
-```
+#### ◦ check file sizes
+```bash
 uv run python -c "
 from file_validator import list_model_files, print_file_summary
 files = list_model_files('./your_model')
@@ -444,8 +436,8 @@ print_file_summary('./your_model', files)
 "
 ```
 
-####  run with uv verbose mode
-```
+#### ◦ run with uv verbose mode
+```bash
 uv --verbose pip install -e .
 ```
 
