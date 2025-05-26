@@ -1,0 +1,20 @@
+# Core dependencies for uploading Llama-3.2 model to HuggingFace
+huggingface_hub>=0.19.0
+transformers>=4.43.0
+torch>=2.0.0
+
+# SentencePiece - try these options in order:
+# Option 1: Skip if build fails (script will work without it)
+# sentencepiece>=0.1.97,<0.2.0
+
+# Optional but recommended for better performance
+accelerate>=0.24.0
+safetensors>=0.4.0
+
+# For tokenizer handling
+tokenizers>=0.15.0
+
+# Standard dependencies (usually included with Python)
+requests>=2.25.0
+tqdm>=4.64.0
+packaging>=20.0
