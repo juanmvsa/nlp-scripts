@@ -31,7 +31,7 @@ curl -lssf https://astral.sh/uv/install.sh | sh
 
 #### 1. clone this repository
 ```bash
-git clone https://github.com/juanmvsa/nlp-scripts/tree/main/llama3-2-model-uploader
+git clone https://github.com/juanmvsa/nlp-scripts/
 ```
 
 #### 2. create the virtual environment 
