@@ -1,6 +1,6 @@
 # 🦙 custom `llama 3.2` model uploader
 
-A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.2](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_2/) models to the [hugging face hub](https://huggingface.co/models). This tool automatically converts from  original Llama checkpoint format to huggingface-compatible format with full tokenizr support.
+A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.2](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_2/) models to the [hugging face hub](https://huggingface.co/models). This tool automatically converts from  original Llama checkpoint format to huggingface-compatible format with full tokenizer support.
 
 ## ✨ Features
 
@@ -18,7 +18,7 @@ A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.
 
 ### Installation with [uv](https://huggingface.co/models) (recommended)
 
-0. Install uv if you haven't already
+0. Install `uv` if you haven't already
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
@@ -157,7 +157,7 @@ The tool automatically creates:
 
 ## 🔧 Advanced Usage
 
-### `uv` Commands
+### `uv` commands
 
 #### Environment Management
 
@@ -257,7 +257,7 @@ test_model_loading_full('user/model', 'your_token')
 
 This project uses [uv](https://github.com/astral-sh/uv) for fast, reliable dependency management.
 
-### Core Requirements
+### Core requirements
 
 All dependencies are defined in the `pyproject.toml` file:
 
@@ -315,7 +315,7 @@ Install without `sentencepiece` extra
 uv pip install -e ".[accelerate]"  # 
 ```
 
-#### option 2: use homebrew + uv
+#### option 2: use `homebrew` + `uv`
 
 ```
 brew install protobuf
