@@ -22,7 +22,7 @@ this tool automatically converts from  original llama checkpoint format to huggi
 
 ## 🚀 quick start
 
-### installation with [uv](https://huggingface.co/models) (recommended)
+### → installation with [uv](https://huggingface.co/models) (recommended)
 
 #### 0. install `uv` if you haven't already
 ```bash
@@ -61,7 +61,7 @@ uv pip install -e ".[all]"  # includes accelerate and sentencepiece
 export hf_token=your_huggingface_token_here
 ```
 
-### alternative installation methods
+### → alternative installation methods
 
 #### install without `sentencepiece` (in case of build issues)
 ```bash
@@ -80,7 +80,7 @@ uv pip install -e ".[sentencepiece,accelerate]"
 
 ---
 
-### basic usage
+### → basic usage
 
 #### using the installed command
 
@@ -98,7 +98,7 @@ uv run python upload_model.py \
   --repo_name your-username/your-model-name
 ```
 
-### full example
+### → full example
 
 ```bash
 llama3-2-upload \
@@ -127,7 +127,7 @@ llama3-2-model-uploader/
 
 ## 📋 requirements
 
-### input files (required)
+### → input files (required)
 
 your `model` folder must contain:
 
@@ -142,7 +142,7 @@ your_model_folder/
 └── checklist.chk           # optional (ignored during upload)
 ```
 
-### generated files
+### → generated files
 
 the tool automatically creates:
 
@@ -170,9 +170,9 @@ the tool automatically creates:
 
 ## 🔧 advanced usage
 
-### `uv` commands
+### → `uv` commands
 
-### environment management
+#### environment management
 
 ##### create and activate the virtual environment
 ```bash
@@ -212,19 +212,19 @@ uv pip install --upgrade -e .
 llama3.2-upload --model_path ./model --repo_name user/model
 ```
 
-##### using `uv run` (runs in an isolated environment)
+##### 1. using `uv run` (runs in an isolated environment)
 ```
 uv run llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
-##### using python directly
+##### 2. using python directly
 ```
 uv run python upload_model.py --model_path ./model --repo_name user/model
 ```
 
 #### environment variables
 
-##### set your huggingface token
+##### set your `huggingface` token
 ```bash
 export hf_token=hf_xxxxxxxxxxxxxxxxxxxx
 ```
@@ -234,7 +234,7 @@ export hf_token=hf_xxxxxxxxxxxxxxxxxxxx
 llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
-### programmatic usage
+### → programmatic usage
 
 ```python
 from file_validator import validate_model_files
@@ -250,7 +250,7 @@ if validate_model_files("./my_model"):
     upload_model_to_hf("./my_model", "user/model", "hf_token")
 ```
 
-### testing only
+### → testing only
 
 ##### upload without testing
 ```bash
@@ -271,7 +271,7 @@ test_model_loading_full('user/model', 'your_token')
 
 this project uses [uv](https://github.com/astral-sh/uv) for fast, reliable dependency management.
 
-### core requirements
+### → core requirements
 
 all dependencies are defined in the `pyproject.toml` file:
 
@@ -287,7 +287,7 @@ dependencies = [
 ]
 ```
 
-### optional dependencies
+### → optional dependencies
 
 ```toml
 [project.optional-dependencies]
@@ -315,7 +315,7 @@ dev = [
 all = ["llama3-2-model-uploader[accelerate,sentencepiece]"]
 ```
 
-### `sentencepiece` installation issues
+### → `sentencepiece` installation issues
 
 if you encounter build errors with `sentencepiece` on macos arm64:
 
@@ -355,7 +355,7 @@ uv pip install sentencepiece --only-binary=sentencepiece
 
 ## 📖 usage examples
 
-### example 1: basic upload
+### → example 1: basic upload
 
 ```bash
 # simple upload with default settings
@@ -364,7 +364,7 @@ llama3-2-upload \
   --repo_name myusername/llama32-chatbot
 ```
 
-### example 2: private model with testing
+### → example 2: private model with testing
 
 ```bash
 # upload private model and test loading
@@ -376,7 +376,7 @@ llama3-2-upload \
   --hf_token hf_xxxxxxxxxxxxxxxxxxxx
 ```
 
-### example 3: skip conversion
+### → example 3: skip conversion
 
 ```bash
 # upload pre-converted model files
@@ -386,7 +386,7 @@ llama3-2-upload \
   --skip_conversion
 ```
 
-### example 4: using `uv run`
+### → example 4: using `uv run`
 
 ```bash
 # run without installing (uses temporary environment)
@@ -399,7 +399,7 @@ uv run --with llama-model-uploader llama3-2-upload \
 
 ## 🔍 troubleshooting
 
-### common issues
+### → common issues
 
 **❌ "missing required files"**
 ```bash
@@ -428,7 +428,7 @@ conda install -c conda-forge sentencepiece
 # for very large models, it will copy the first checkpoint instead of merging
 ```
 
-### debug mode
+### → debug mode
 
 #### run with python's verbose output
 ```bash
