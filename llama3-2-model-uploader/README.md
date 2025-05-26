@@ -1,44 +1,56 @@
-# 🦙 llama-3.2 Model Uploader
 
-A comprehensive Python toolkit for converting and uploading fine-tuned Llama-3.2 models to Hugging Face Hub. This tool automatically converts from the original Llama checkpoint format to HuggingFace-compatible format with full tokenizer support.
+# 🦙 Llama-3.2 Model Uploader
+
+A comprehensive Python toolkit for converting and uploading fine-tuned Llama-3.2 models to your Hugging Face Hub account. This tool automatically converts from  original Llama checkpoint format to HuggingFace-compatible format with full tokenizr support.
 
 ## ✨ Features
 
 - 🔄 **Automatic Format Conversion**: Converts Llama checkpoint format to HuggingFace format
-- 🎯 **Smart Tokenizer Handling**: Works with or without SentencePiece (this library has issues with ARM-based Apple systems), includes fallback mechanisms
+- 🎯 **Smart Tokenizer Handling**: Works with or without SentencePiece (this library has some issues in ARM-based Apple systems), includes fallback mechanisms
 - 📦 **Modular Architecture**: Clean, reusable components for different tasks
 - 🧠 **Memory Efficient**: Handles large models with intelligent memory management
 - 🔒 **Secure Upload**: Supports private repositories and token authentication
 - 🧪 **Built-in Testing**: Validates model loading after upload
 - 📊 **Progress Tracking**: Clear status messages and file size reporting
 - 🛡️ **Error Resilience**: Comprehensive error handling and fallback strategies
+- ⚡ **UV-Powered**: Uses UV for fast, reliable dependency management
 
 ## 🚀 Quick Start
 
-### Installation
+### Installation with [uv]() (Recommended)
+
+0. Install uv if you haven't already
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
 1. Clone this repository
-```bash
-git clone <repository-url>
 ```
-  
-```
-cd llama-model-uploader
+git clone https://github.com/juanmvsa/nlp-scripts/tree/main/llama3-2-model-uploader
 ```
 
-2. Start a [uv](https://docs.astral.sh/uv/guides/projects/) project
+2. Create the virtual environment 
 ```
-uv init    
+cd llama3-2-model-uploader
 ```
-:w
 
-
-
-
-2. Install the necessary dependencies
 ```
-# install dependencies
-pip install -r requirements.txt
+uv venv
+```
+
+```
+source .venv/bin/activate  # on windows: .venv\Scripts\activate
+```
+
+```
+uv pip install -e .
+```
+
+3. Install the necessary dependencies
+
+```
+# install with optional dependencies
+uv pip install -e ".[all]"  # includes accelerate and sentencepiece
 ```
 
 ```
@@ -46,10 +58,38 @@ pip install -r requirements.txt
 export HF_TOKEN=your_huggingface_token_here
 ```
 
-### Basic Usage
+
+### Alternative Installation Methods
 
 ```bash
-python upload_model.py \
+# install without sentencepiece (if build issues)
+uv pip install -e ".[accelerate]"
+```
+
+```
+# development installation
+uv pip install -e ".[dev]"
+```
+
+```
+# install specific extras
+uv pip install -e ".[sentencepiece,accelerate]"
+```
+
+### Basic Usage
+
+#### Using the installed command
+
+```bash
+llama3-2-upload \
+  --model_path ./your_llama32_model \
+  --repo_name your-username/your-model-name
+```
+
+#### or using python directly
+
+```
+uv run python upload_model.py \
   --model_path ./your_llama32_model \
   --repo_name your-username/your-model-name
 ```
@@ -57,9 +97,9 @@ python upload_model.py \
 ### Full Example
 
 ```bash
-python upload_model.py \
+llama3-2-upload \
   --model_path ./my_finetuned_llama \
-  --repo_name johndoe/llama32-finance-model \
+  --repo_name johndoe/llama32-finetuned-model \
   --private \
   --test
 ```
@@ -67,7 +107,7 @@ python upload_model.py \
 ## 📁 Project Structure
 
 ```
-llama-model-uploader/
+llama3-2-model-uploader/
 ├── upload_model.py          # 🎯 main entry point
 ├── file_validator.py        # 🔍 file validation utilities
 ├── model_converter.py       # 🔄 format conversion logic
@@ -82,7 +122,7 @@ llama-model-uploader/
 
 ### Input Files (Required)
 
-Your model folder must contain:
+Your `model` folder must contain:
 
 ```
 your_model_folder/
@@ -119,14 +159,68 @@ The tool automatically creates:
 
 ## 🔧 Advanced Usage
 
+### UV Commands
+
+#### Environment Management
+
+0. Create and activate the virtual environment
+```bash
+uv venv
+```
+
+Linux/MacOS
+```
+source .venv/bin/activate  
+```
+
+or (Windows)
+```
+.venv\Scripts\activate
+```
+
+1. Install project in development mode
+
+```
+uv pip install -e .
+```
+
+2. Install with all optional dependencies
+```
+uv pip install -e ".[all]"
+```
+
+3. Update dependencies
+```
+uv pip install --upgrade -e .
+```
+
+#### Running the script
+
+0. Using the installed command (recommended)
+```bash
+llama3.2-upload --model_path ./model --repo_name user/model
+```
+
+1. Using uv run (runs in an isolated environment)
+```
+uv run llama3-2-upload --model_path ./model --repo_name user/model
+```
+
+# using python directly
+```
+uv run python upload_model.py --model_path ./model --repo_name user/model
+```
+
 ### Environment Variables
 
+0. Set your huggingface token
 ```bash
-# set huggingface token
 export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxx
+```
 
-# run with environment token
-python upload_model.py --model_path ./model --repo_name user/model
+1. Run with the environment token
+```
+llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
 ### Programmatic Usage
@@ -147,12 +241,15 @@ if validate_model_files("./my_model"):
 
 ### Testing Only
 
+0. Upload without testing
 ```bash
-# upload without testing
-python upload_model.py --model_path ./model --repo_name user/model
+llama3-2-upload --model_path ./model --repo_name user/model
+```
+  
 
-# test existing repository
-python -c "
+1. Test an existing repository
+```
+uv run python -c "
 from model_tester import test_model_loading_full
 test_model_loading_full('user/model', 'your_token')
 "
@@ -160,37 +257,86 @@ test_model_loading_full('user/model', 'your_token')
 
 ## 🐍 Dependencies
 
+This project uses [uv](https://github.com/astral-sh/uv) for fast, reliable dependency management.
+
 ### Core Requirements
 
-```txt
-huggingface_hub>=0.19.0    # hub integration
-transformers>=4.43.0       # model compatibility
-torch>=2.0.0              # pytorch backend
-tokenizers>=0.15.0        # tokenizer handling
+All dependencies are defined in the `pyproject.toml` file:
+
+```toml
+dependencies = [
+    "huggingface_hub>=0.19.0",    # hub integration
+    "transformers>=4.43.0",       # model compatibility
+    "torch>=2.0.0",              # pytorch backend
+    "tokenizers>=0.15.0",        # tokenizer handling
+    "requests>=2.25.0",          # http requests
+    "tqdm>=4.64.0",              # progress bars
+    "packaging>=20.0",           # version parsing
+]
 ```
 
 ### Optional Dependencies
 
-```txt
-sentencepiece>=0.1.97     # tokenizer conversion (recommended)
-accelerate>=0.24.0        # faster model loading
-safetensors>=0.4.0        # safer serialization
+```toml
+[project.optional-dependencies]
+# performance improvements
+accelerate = [
+    "accelerate>=0.24.0",
+    "safetensors>=0.4.0",
+]
+
+# tokenizer conversion (may have build issues on some platforms)
+sentencepiece = [
+    "sentencepiece>=0.1.97,<0.2.0",
+]
+
+# development tools
+dev = [
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.5.0",
+    "pytest>=7.4.0",
+    "ruff>=0.0.290",
+]
+
+# all optional dependencies
+all = ["llama3-2-model-uploader[accelerate,sentencepiece]"]
 ```
 
 ### SentencePiece Installation Issues
 
-If you encounter build errors with SentencePiece on macOS ARM64:
+If you encounter build errors with `sentencepiece` on MacOS ARM64:
 
+#### Option 1: use conda
 ```bash
-# option 1: use conda
 conda install -c conda-forge sentencepiece
+```
 
-# option 2: use homebrew + pip
+Install without sentencepiece extra
+```
+uv pip install -e ".[accelerate]"  # 
+```
+
+#### option 2: use homebrew + uv
+
+```
 brew install protobuf
-pip install sentencepiece
+```
 
-# option 3: skip sentencepiece (tool will use fallbacks)
-pip install huggingface_hub transformers torch accelerate
+```
+uv pip install -e ".[all]"
+```
+
+#### Option 3: skip sentencepiece (tool will use fallbacks)
+
+Install without `sentencepiece`
+```
+uv pip install -e ".[accelerate]"   
+```
+
+#### Option 4: use pre-built wheel
+```
+uv pip install sentencepiece --only-binary=sentencepiece
 ```
 
 ## 📖 Usage Examples
@@ -199,7 +345,7 @@ pip install huggingface_hub transformers torch accelerate
 
 ```bash
 # simple upload with default settings
-python upload_model.py \
+llama3-2-upload \
   --model_path ./llama32_finetuned \
   --repo_name myusername/llama32-chatbot
 ```
@@ -208,7 +354,7 @@ python upload_model.py \
 
 ```bash
 # upload private model and test loading
-python upload_model.py \
+llama3-2-upload \
   --model_path ./sensitive_model \
   --repo_name company/internal-model \
   --private \
@@ -220,10 +366,19 @@ python upload_model.py \
 
 ```bash
 # upload pre-converted model files
-python upload_model.py \
+llama3-2-upload \
   --model_path ./already_converted_model \
   --repo_name user/converted-model \
   --skip_conversion
+```
+
+### Example 4: Using `uv run`
+
+```bash
+# run without installing (uses temporary environment)
+uv run --with llama-model-uploader llama3-2-upload \
+  --model_path ./model \
+  --repo_name user/model
 ```
 
 ## 🔍 Troubleshooting
@@ -244,7 +399,7 @@ export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxx
 python -c "from huggingface_hub import HfApi; print(HfApi().whoami())"
 ```
 
-**❌ "SentencePiece build failed"**
+**❌ "`sentencepiece` build failed"**
 ```bash
 # install via conda instead
 conda install -c conda-forge sentencepiece
@@ -261,14 +416,17 @@ conda install -c conda-forge sentencepiece
 
 ```bash
 # run with python's verbose output
-python -v upload_model.py --model_path ./model --repo_name user/model
+uv run python -v upload_model.py --model_path ./model --repo_name user/model
 
 # check file sizes
-python -c "
+uv run python -c "
 from file_validator import list_model_files, print_file_summary
 files = list_model_files('./your_model')
 print_file_summary('./your_model', files)
 "
+
+# run with uv verbose mode
+uv --verbose pip install -e .
 ```
 
 ## 🧪 Testing Your Upload
@@ -290,49 +448,7 @@ response = tokenizer.decode(outputs[0], skip_special_tokens=True)
 print(response)
 ```
 
-## 🤝 Contributing
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a pull request
-
-### Development Setup
-
-```bash
-# clone your fork
-git clone https://github.com/yourusername/llama-model-uploader.git
-cd llama-model-uploader
-
-# install development dependencies
-pip install -r requirements.txt
-pip install black isort mypy  # formatting and type checking
-
-# run type checking
-mypy *.py
-
-# format code
-black *.py
-isort *.py
-```
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
-
-- **Meta AI** for the Llama-3.2 model architecture
-- **Hugging Face** for the transformers library and model hub
-- **The open-source community** for inspiration and feedback
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/llama-model-uploader/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/llama-model-uploader/discussions)
-- **Documentation**: This README and inline code comments
-
----
-
-**⭐ If this tool helped you, please consider giving it a star on GitHub!**
