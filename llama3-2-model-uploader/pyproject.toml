@@ -65,10 +65,10 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/juanmvsa/llama3-2-model-uploader"
-Repository = "https://github.com/juanmvsa/llama3-2-model-uploader"
-Issues = "https://github.com/juanmvsa/llama3-2-model-uploader/issues"
-Documentation = "https://github.com/juanmvsa/llama3-2-model-uploader#readme"
+Homepage = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader"
+Repository = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader"
+Issues = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader/issues"
+Documentation = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader#readme"
 
 [project.scripts]
 llama-upload = "upload_model:main"
