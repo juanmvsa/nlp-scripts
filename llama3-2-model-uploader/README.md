@@ -76,7 +76,7 @@ uv pip install -e ".[sentencepiece,accelerate]"
 
 ### basic usage
 
-#### Using the installed command
+#### using the installed command
 
 ```bash
 llama3-2-upload \
@@ -92,7 +92,7 @@ uv run python upload_model.py \
   --repo_name your-username/your-model-name
 ```
 
-### Full example
+### full example
 
 ```bash
 llama3-2-upload \
@@ -101,8 +101,9 @@ llama3-2-upload \
   --private \
   --test
 ```
+---
 
-## 📁 Project structure
+## 📁 project structure
 
 ```
 llama3-2-model-uploader/
@@ -133,18 +134,20 @@ your_model_folder/
 └── checklist.chk           # optional (ignored during upload)
 ```
 
-### Generated files
+### generated files
 
-The tool automatically creates:
+the tool automatically creates:
 
-- `config.json` - HuggingFace model configuration
+- `config.json` - huggingface model configuration
 - `pytorch_model.bin` - merged model weights
 - `tokenizer_config.json` - tokenizer configuration
 - `special_tokens_map.json` - special tokens mapping
 - `tokenizer.json` - fast tokenizer (when possible)
 - `README.md` - model card with usage instructions
 
-## 🛠️ Command line options
+---
+
+## 🛠️ command line options
 
 | Option | Description | Required |
 |--------|-------------|----------|
@@ -155,73 +158,75 @@ The tool automatically creates:
 | `--test` | test model loading after upload | ❌ |
 | `--skip_conversion` | skip format conversion | ❌ |
 
-## 🔧 Advanced usage
+---
+
+## 🔧 advanced usage
 
 ### `uv` commands
 
-#### Environment management
+### environment management
 
-0. Create and activate the virtual environment
+##### create and activate the virtual environment
 ```bash
 uv venv
 ```
 
-Linux/MacOS
+##### Linux/MacOS
 ```
 source .venv/bin/activate  
 ```
 
-or (Windows)
+##### or (Windows)
 ```
 .venv\Scripts\activate
 ```
 
-1. Install project in development mode
+#### install project in development mode
 
 ```
 uv pip install -e .
 ```
 
-2. Install with all optional dependencies
+#### install with all optional dependencies
 ```
 uv pip install -e ".[all]"
 ```
 
-3. Update dependencies
+#### update dependencies
 ```
 uv pip install --upgrade -e .
 ```
 
-#### Running the script
+#### running the script
 
-0. Using the installed command (recommended)
+##### 0. using the installed command (recommended)
 ```bash
 llama3.2-upload --model_path ./model --repo_name user/model
 ```
 
-1. Using `uv run` (runs in an isolated environment)
+##### using `uv run` (runs in an isolated environment)
 ```
 uv run llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
-# using python directly
+##### using python directly
 ```
 uv run python upload_model.py --model_path ./model --repo_name user/model
 ```
 
-### Environment variables
+#### environment variables
 
-0. Set your huggingface token
+##### set your huggingface token
 ```bash
 export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxx
 ```
 
-1. Run with the environment token
+##### run with the environment token
 ```
 llama3-2-upload --model_path ./model --repo_name user/model
 ```
 
-### Programmatic usage
+### programmatic usage
 
 ```python
 from file_validator import validate_model_files
@@ -237,15 +242,14 @@ if validate_model_files("./my_model"):
     upload_model_to_hf("./my_model", "user/model", "hf_token")
 ```
 
-### Testing only
+### testing only
 
-0. Upload without testing
+##### upload without testing
 ```bash
 llama3-2-upload --model_path ./model --repo_name user/model
 ```
-  
 
-1. Test an existing repository
+##### test an existing repository
 ```
 uv run python -c "
 from model_tester import test_model_loading_full
@@ -253,13 +257,15 @@ test_model_loading_full('user/model', 'your_token')
 "
 ```
 
-## 🐍 Dependencies
+---
 
-This project uses [uv](https://github.com/astral-sh/uv) for fast, reliable dependency management.
+## 🐍 dependencies
 
-### Core requirements
+this project uses [uv](https://github.com/astral-sh/uv) for fast, reliable dependency management.
 
-All dependencies are defined in the `pyproject.toml` file:
+### core requirements
+
+all dependencies are defined in the `pyproject.toml` file:
 
 ```toml
 dependencies = [
@@ -273,7 +279,7 @@ dependencies = [
 ]
 ```
 
-### Optional dependencies
+### optional dependencies
 
 ```toml
 [project.optional-dependencies]
@@ -337,9 +343,11 @@ uv pip install -e ".[accelerate]"
 uv pip install sentencepiece --only-binary=sentencepiece
 ```
 
-## 📖 Usage examples
+---
 
-### Example 1: basic upload
+## 📖 usage examples
+
+### example 1: basic upload
 
 ```bash
 # simple upload with default settings
@@ -348,7 +356,7 @@ llama3-2-upload \
   --repo_name myusername/llama32-chatbot
 ```
 
-### Example 2: private model with testing
+### example 2: private model with testing
 
 ```bash
 # upload private model and test loading
@@ -360,7 +368,7 @@ llama3-2-upload \
   --hf_token hf_xxxxxxxxxxxxxxxxxxxx
 ```
 
-### Example 3: skip conversion
+### example 3: skip conversion
 
 ```bash
 # upload pre-converted model files
@@ -370,7 +378,7 @@ llama3-2-upload \
   --skip_conversion
 ```
 
-### Example 4: Using `uv run`
+### example 4: Using `uv run`
 
 ```bash
 # run without installing (uses temporary environment)
@@ -379,9 +387,11 @@ uv run --with llama-model-uploader llama3-2-upload \
   --repo_name user/model
 ```
 
-## 🔍 Troubleshooting
+---
 
-### Common issues
+## 🔍 troubleshooting
+
+### common issues
 
 **❌ "Missing required files"**
 ```bash
@@ -410,29 +420,32 @@ conda install -c conda-forge sentencepiece
 # for very large models, it will copy the first checkpoint instead of merging
 ```
 
-### Debug mode
+### debug mode
 
+#### run with python's verbose output
 ```bash
-# run with python's verbose output
 uv run python -v upload_model.py --model_path ./model --repo_name user/model
 ```
 
+#### check file sizes
 ```
-# check file sizes
 uv run python -c "
 from file_validator import list_model_files, print_file_summary
 files = list_model_files('./your_model')
 print_file_summary('./your_model', files)
 "
-
 ```
-# run with uv verbose mode
+
+####  run with uv verbose mode
+```
 uv --verbose pip install -e .
 ```
 
-## 🧪 Testing your upload
+---
 
-After uploading, test your model:
+## 🧪 testing your upload
+
+after uploading, test your model:
 
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -449,7 +462,9 @@ response = tokenizer.decode(outputs[0], skip_special_tokens=True)
 print(response)
 ```
 
-## 📄 License
+---
+
+## 📄 license
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
