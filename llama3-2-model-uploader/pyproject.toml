@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "llama3-2-model-uploader"
+name = "llama-model-uploader"
 version = "1.0.0"
 description = "A comprehensive toolkit for converting and uploading fine-tuned Llama-3.2 models to Hugging Face Hub"
 readme = "README.md"
@@ -61,22 +61,31 @@ dev = [
 
 # all optional dependencies
 all = [
-    "llama3-2-model-uploader[accelerate,sentencepiece]",
+    "llama-model-uploader[accelerate,sentencepiece]",
 ]
 
 [project.urls]
 Homepage = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader"
 Repository = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader"
-Issues = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader/issues"
 Documentation = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader#readme"
 
 [project.scripts]
-llama-upload = "upload_model:main"
+llama-upload = "llama_uploader.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["llama_uploader"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/llama_uploader",
+    "/README.md",
+    "/pyproject.toml",
+]
 
 [tool.black]
 line-length = 100
 target-version = ["py39", "py310", "py311", "py312", "py313"]
-include = '\.pyi?$'
+include = '\.pyi?
 
 [tool.isort]
 profile = "black"

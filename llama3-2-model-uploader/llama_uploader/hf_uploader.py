@@ -159,7 +159,7 @@ def upload_model_to_hf(model_path: Union[str, Path], repo_name: str, hf_token: s
     print("✅ created readme.md")
     
     # import here to avoid circular imports.
-    from file_validator import list_model_files, print_file_summary
+    from .file_validator import list_model_files, print_file_summary
     
     # list files that will be uploaded.
     files_to_upload = list_model_files(model_path)
