@@ -1,7 +1,6 @@
+# 🦙 custom `llama 3.2` model uploader
 
-# 🦙 Llama-3.2 Model Uploader
-
-A comprehensive Python toolkit for converting and uploading fine-tuned Llama-3.2 models to your Hugging Face Hub account. This tool automatically converts from  original Llama checkpoint format to HuggingFace-compatible format with full tokenizr support.
+A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.2](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_2/) models to the [hugging face hub](https://huggingface.co/models). This tool automatically converts from  original Llama checkpoint format to huggingface-compatible format with full tokenizr support.
 
 ## ✨ Features
 
@@ -17,7 +16,7 @@ A comprehensive Python toolkit for converting and uploading fine-tuned Llama-3.2
 
 ## 🚀 Quick Start
 
-### Installation with [uv]() (Recommended)
+### Installation with [uv](https://huggingface.co/models) (recommended)
 
 0. Install uv if you haven't already
 ```bash
@@ -48,31 +47,30 @@ uv pip install -e .
 
 3. Install the necessary dependencies
 
+Install with optional dependencies
 ```
-# install with optional dependencies
 uv pip install -e ".[all]"  # includes accelerate and sentencepiece
 ```
 
+Set your `huggingface` token
 ```
-# set your huggingface token
 export HF_TOKEN=your_huggingface_token_here
 ```
 
-
 ### Alternative Installation Methods
 
+Install without `sentencepiece` (in case of build issues)
 ```bash
-# install without sentencepiece (if build issues)
 uv pip install -e ".[accelerate]"
 ```
 
+Development installation
 ```
-# development installation
 uv pip install -e ".[dev]"
 ```
 
+Install specific extras
 ```
-# install specific extras
 uv pip install -e ".[sentencepiece,accelerate]"
 ```
 
@@ -159,7 +157,7 @@ The tool automatically creates:
 
 ## 🔧 Advanced Usage
 
-### UV Commands
+### `uv` Commands
 
 #### Environment Management
 
@@ -201,7 +199,7 @@ uv pip install --upgrade -e .
 llama3.2-upload --model_path ./model --repo_name user/model
 ```
 
-1. Using uv run (runs in an isolated environment)
+1. Using `uv run` (runs in an isolated environment)
 ```
 uv run llama3-2-upload --model_path ./model --repo_name user/model
 ```
@@ -312,7 +310,7 @@ If you encounter build errors with `sentencepiece` on MacOS ARM64:
 conda install -c conda-forge sentencepiece
 ```
 
-Install without sentencepiece extra
+Install without `sentencepiece` extra
 ```
 uv pip install -e ".[accelerate]"  # 
 ```
@@ -327,14 +325,14 @@ brew install protobuf
 uv pip install -e ".[all]"
 ```
 
-#### Option 3: skip sentencepiece (tool will use fallbacks)
+#### Option 3: skip `sentencepiece` (the script will use the defined fallbacks)
 
 Install without `sentencepiece`
 ```
 uv pip install -e ".[accelerate]"   
 ```
 
-#### Option 4: use pre-built wheel
+#### Option 4: use the pre-built wheel
 ```
 uv pip install sentencepiece --only-binary=sentencepiece
 ```
