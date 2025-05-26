@@ -1,18 +1,24 @@
 # 🦙 custom `llama 3.2` model uploader
 
-A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.2](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_2/) models to the [hugging face hub](https://huggingface.co/models). This tool automatically converts from  original Llama checkpoint format to huggingface-compatible format with full tokenizer support.
+a comprehensive python toolkit for converting and uploading fine-tuned [llama 3.2](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_2/) models to the [hugging face hub](https://huggingface.co/models).
+
+this tool automatically converts from  original llama checkpoint format to huggingface-compatible format with full tokenizer support.
+
+---
 
 ## ✨ features
 
-- 🔄 **Automatic Format Conversion**: Converts Llama checkpoint format to HuggingFace format
-- 🎯 **Smart Tokenizer Handling**: Works with or without SentencePiece (this library has some issues in ARM-based Apple systems), includes fallback mechanisms
-- 📦 **Modular Architecture**: Clean, reusable components for different tasks
-- 🧠 **Memory Efficient**: Handles large models with intelligent memory management
-- 🔒 **Secure Upload**: Supports private repositories and token authentication
-- 🧪 **Built-in Testing**: Validates model loading after upload
-- 📊 **Progress Tracking**: Clear status messages and file size reporting
-- 🛡️ **Error Resilience**: Comprehensive error handling and fallback strategies
-- ⚡ **UV-Powered**: Uses UV for fast, reliable dependency management
+- 🔄 **automatic format conversion**: converts llama checkpoint format to huggingface format
+- 🎯 **smart tokenizer handling**: works with or without sentencepiece (this library has some issues in arm-based apple systems), includes fallback mechanisms
+- 📦 **modular architecture**: clean, reusable components for different tasks
+- 🧠 **memory efficient**: handles large models with intelligent memory management
+- 🔒 **secure upload**: supports private repositories and token authentication
+- 🧪 **built-in testing**: validates model loading after upload
+- 📊 **progress tracking**: clear status messages and file size reporting
+- 🛡️ **error resilience**: comprehensive error handling and fallback strategies
+- ⚡ **`uv`-powered**: uses `uv` for fast, reliable dependency management
+
+---
 
 ## 🚀 quick start
 
@@ -20,7 +26,7 @@ A comprehensive Python toolkit for converting and uploading fine-tuned [llama 3.
 
 #### 0. install `uv` if you haven't already
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+curl -lssf https://astral.sh/uv/install.sh | sh
 ```
 
 #### 1. clone this repository
@@ -38,7 +44,7 @@ uv venv
 ```
 
 ```
-source .venv/bin/activate  # on windows: .venv\Scripts\activate
+source .venv/bin/activate  # on windows: .venv\scripts\activate
 ```
 
 ```
@@ -52,7 +58,7 @@ uv pip install -e ".[all]"  # includes accelerate and sentencepiece
 
 #### 4. set your `huggingface` token
 ```
-export HF_TOKEN=your_huggingface_token_here
+export hf_token=your_huggingface_token_here
 ```
 
 ### alternative installation methods
@@ -114,21 +120,23 @@ llama3-2-model-uploader/
 ├── hf_uploader.py           # ⬆️ huggingface hub integration
 ├── model_tester.py          # 🧪 model testing utilities
 ├── requirements.txt         # 📦 python dependencies
-└── README.md               # 📖 documentation
+└── readme.md               # 📖 documentation
 ```
 
-## 📋 Requirements
+---
 
-### Input files (required)
+## 📋 requirements
 
-Your `model` folder must contain:
+### input files (required)
+
+your `model` folder must contain:
 
 ```
 your_model_folder/
 ├── consolidated.00.pth      # model weights (part 0)
 ├── consolidated.01.pth      # model weights (part 1)
 ├── ...                      # additional weight files
-├── consolidated.XX.pth      # model weights (part X)
+├── consolidated.xx.pth      # model weights (part x)
 ├── params.json              # model parameters
 ├── tokenizer.model          # sentencepiece tokenizer
 └── checklist.chk           # optional (ignored during upload)
@@ -143,17 +151,17 @@ the tool automatically creates:
 - `tokenizer_config.json` - tokenizer configuration
 - `special_tokens_map.json` - special tokens mapping
 - `tokenizer.json` - fast tokenizer (when possible)
-- `README.md` - model card with usage instructions
+- `readme.md` - model card with usage instructions
 
 ---
 
 ## 🛠️ command line options
 
-| Option | Description | Required |
+| option | description | required |
 |--------|-------------|----------|
 | `--model_path` | path to your model folder | ✅ |
 | `--repo_name` | huggingface repo (`username/model-name`) | ✅ |
-| `--hf_token` | huggingface token (or set `HF_TOKEN` env var) | ⚠️ |
+| `--hf_token` | huggingface token (or set `hf_token` env var) | ⚠️ |
 | `--private` | make repository private | ❌ |
 | `--test` | test model loading after upload | ❌ |
 | `--skip_conversion` | skip format conversion | ❌ |
@@ -171,14 +179,14 @@ the tool automatically creates:
 uv venv
 ```
 
-##### Linux/MacOS
+##### linux/macos
 ```
 source .venv/bin/activate  
 ```
 
-##### or (Windows)
+##### or (windows)
 ```
-.venv\Scripts\activate
+.venv\scripts\activate
 ```
 
 #### install project in development mode
@@ -218,7 +226,7 @@ uv run python upload_model.py --model_path ./model --repo_name user/model
 
 ##### set your huggingface token
 ```bash
-export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxx
+export hf_token=hf_xxxxxxxxxxxxxxxxxxxx
 ```
 
 ##### run with the environment token
@@ -309,14 +317,14 @@ all = ["llama3-2-model-uploader[accelerate,sentencepiece]"]
 
 ### `sentencepiece` installation issues
 
-If you encounter build errors with `sentencepiece` on MacOS ARM64:
+if you encounter build errors with `sentencepiece` on macos arm64:
 
 #### option 1: use `conda`
 ```bash
 conda install -c conda-forge sentencepiece
 ```
 
-Install without `sentencepiece` extra
+install without `sentencepiece` extra
 ```
 uv pip install -e ".[accelerate]"  # 
 ```
@@ -333,7 +341,7 @@ uv pip install -e ".[all]"
 
 #### option 3: skip `sentencepiece` (the script will use the defined fallbacks)
 
-Install without `sentencepiece`
+install without `sentencepiece`
 ```
 uv pip install -e ".[accelerate]"   
 ```
@@ -378,7 +386,7 @@ llama3-2-upload \
   --skip_conversion
 ```
 
-### example 4: Using `uv run`
+### example 4: using `uv run`
 
 ```bash
 # run without installing (uses temporary environment)
@@ -393,18 +401,18 @@ uv run --with llama-model-uploader llama3-2-upload \
 
 ### common issues
 
-**❌ "Missing required files"**
+**❌ "missing required files"**
 ```bash
 # ensure your model folder contains:
 ls your_model_folder/
 # should show: consolidated.*.pth, params.json, tokenizer.model
 ```
 
-**❌ "Token verification failed"**
+**❌ "token verification failed"**
 ```bash
 # check your token has write permissions
-export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxx
-python -c "from huggingface_hub import HfApi; print(HfApi().whoami())"
+export hf_token=hf_xxxxxxxxxxxxxxxxxxxx
+python -c "from huggingface_hub import hfapi; print(hfapi().whoami())"
 ```
 
 **❌ "`sentencepiece` build failed"**
@@ -414,7 +422,7 @@ conda install -c conda-forge sentencepiece
 # or skip sentencepiece (tool will use fallbacks)
 ```
 
-**❌ "Out of memory during conversion"**
+**❌ "out of memory during conversion"**
 ```bash
 # the tool automatically handles this with fallbacks
 # for very large models, it will copy the first checkpoint instead of merging
@@ -448,17 +456,17 @@ uv --verbose pip install -e .
 after uploading, test your model:
 
 ```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import autotokenizer, automodelforcausallm
 
 # load your uploaded model
-tokenizer = AutoTokenizer.from_pretrained("your-username/your-model")
-model = AutoModelForCausalLM.from_pretrained("your-username/your-model")
+tokenizer = autotokenizer.from_pretrained("your-username/your-model")
+model = automodelforcausallm.from_pretrained("your-username/your-model")
 
 # test generation
-prompt = "Hello, I am a Llama model"
+prompt = "hello, i am a llama model"
 inputs = tokenizer(prompt, return_tensors="pt")
 outputs = model.generate(**inputs, max_new_tokens=50)
-response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+response = tokenizer.decode(outputs[0], skip_special_tokens=true)
 print(response)
 ```
 
@@ -466,5 +474,4 @@ print(response)
 
 ## 📄 license
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+this project is licensed under the mit license - see the [license](license) file for details.
