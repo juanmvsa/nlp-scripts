@@ -44,7 +44,13 @@ accelerate = [
     "safetensors>=0.4.0",
 ]
 
-# sentencepiece with fallback options
+# spacy tokenizer (more reliable than sentencepiece)
+spacy = [
+    "spacy>=3.7.0",
+    "spacy-transformers>=1.3.0",
+]
+
+# sentencepiece (fallback option, may have build issues)
 sentencepiece = [
     "sentencepiece>=0.1.97,<0.2.0",
 ]
@@ -59,15 +65,16 @@ dev = [
     "ruff>=0.0.290",
 ]
 
-# all optional dependencies
+# all optional dependencies (prioritizes spacy over sentencepiece)
 all = [
-    "llama-model-uploader[accelerate,sentencepiece]",
+    "llama-model-uploader[accelerate,spacy]",
 ]
 
 [project.urls]
-Homepage = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader"
-Repository = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader"
-Documentation = "https://github.com/juanmvsa/nlp-scripts/llama3-2-model-uploader#readme"
+Homepage = "https://github.com/nlp-scripts/llama-model-uploader"
+Repository = "https://github.com/nlp-scripts/llama-model-uploader"
+Issues = "https://github.com/nlp-scripts/llama-model-uploader/issues"
+Documentation = "https://github.com/nlp-scripts/llama-model-uploader#readme"
 
 [project.scripts]
 llama-upload = "llama_uploader.cli:main"

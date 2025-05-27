@@ -23,4 +23,8 @@ __all__ = [
     "create_tokenizer_files",
     "upload_model_to_hf",
     "test_model_loading_full",
+    "detect_llama_version",
+    "get_version_info",
+    "LlamaVersion",
+    "ModelSize",
 ]
