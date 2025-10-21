@@ -95,12 +95,14 @@ output after running:
 
 ```
 summaries/
-  ├── paper1.txt
-  ├── notes.txt
+  ├── paper1_llama4_maverick_summary.txt
+  ├── notes_llama4_maverick_summary.txt
   └── research/
-      ├── article.txt
-      └── report.txt
+      ├── article_llama4_maverick_summary.txt
+      └── report_llama4_maverick_summary.txt
 ```
+
+**note**: when processing folders, output files are named as `{original_filename}_llama4_maverick_summary.txt` to clearly identify them as summaries while preserving the original filename.
 
 ## getting your huggingface token
 

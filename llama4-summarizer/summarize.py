@@ -215,7 +215,13 @@ def generate_output_path(input_file: Path, output_path: str, base_input_path: Pa
     if base_input_path.is_dir() or output.is_dir() or output_path.endswith('/'):
         # create relative path structure.
         relative_path = input_file.relative_to(base_input_path.parent if base_input_path.is_file() else base_input_path)
-        output_file = output / relative_path.with_suffix('.txt')
+
+        # generate new filename: originalname_llama4_maverick_summary.txt.
+        original_stem = input_file.stem
+        new_filename = f"{original_stem}_llama4_maverick_summary.txt"
+
+        # maintain directory structure but use new filename.
+        output_file = output / relative_path.parent / new_filename
         return str(output_file)
     else:
         # single file output.
