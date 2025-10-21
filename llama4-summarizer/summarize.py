@@ -50,10 +50,12 @@ def load_model(hf_token: str):
         trust_remote_code=True
     )
 
-    # configure 8-bit quantization with cpu offload.
+    # configure 4-bit quantization (nf4) for maximum memory efficiency.
     quantization_config = BitsAndBytesConfig(
-        load_in_8bit=True,
-        llm_int8_enable_fp32_cpu_offload=True
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_compute_dtype=torch.bfloat16
     )
 
     model = AutoModelForCausalLM.from_pretrained(
@@ -62,10 +64,11 @@ def load_model(hf_token: str):
         quantization_config=quantization_config,
         device_map="auto",
         trust_remote_code=True,
-        low_cpu_mem_usage=True
+        low_cpu_mem_usage=True,
+        max_memory={0: "70GiB", "cpu": "100GiB"}
     )
 
-    print(f"model loaded with 8-bit quantization and cpu offload enabled.")
+    print(f"model loaded with 4-bit nf4 quantization (~75% memory reduction).")
 
     # check where model parameters are loaded.
     print("\nmodel loaded successfully.")
