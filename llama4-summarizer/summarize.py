@@ -20,7 +20,7 @@ import argparse
 import sys
 from pathlib import Path
 from typing import List
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import torch
 import spacy
 from spacy_layout import spaCyLayout
@@ -50,16 +50,22 @@ def load_model(hf_token: str):
         trust_remote_code=True
     )
 
+    # configure 8-bit quantization with cpu offload.
+    quantization_config = BitsAndBytesConfig(
+        load_in_8bit=True,
+        llm_int8_enable_fp32_cpu_offload=True
+    )
+
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         token=hf_token,
-        load_in_8bit=True,
+        quantization_config=quantization_config,
         device_map="auto",
         trust_remote_code=True,
         low_cpu_mem_usage=True
     )
 
-    print(f"model loaded with 8-bit quantization to reduce memory usage.")
+    print(f"model loaded with 8-bit quantization and cpu offload enabled.")
 
     # check where model parameters are loaded.
     print("\nmodel loaded successfully.")
