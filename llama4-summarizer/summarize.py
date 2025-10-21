@@ -59,6 +59,10 @@ def load_model(hf_token: str):
         llm_int8_enable_fp32_cpu_offload=True
     )
 
+    # clear any existing cuda cache before loading.
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         token=hf_token,
@@ -66,7 +70,7 @@ def load_model(hf_token: str):
         device_map="auto",
         trust_remote_code=True,
         low_cpu_mem_usage=True,
-        max_memory={0: "70GiB", "cpu": "100GiB"}
+        max_memory={0: "50GiB", "cpu": "200GiB"}
     )
 
     print(f"model loaded with 4-bit nf4 quantization (~75% memory reduction).")
