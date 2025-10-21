@@ -52,11 +52,10 @@ def load_model(hf_token: str):
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         token=hf_token,
-        torch_dtype=torch.bfloat16,
+        dtype=torch.bfloat16,
         device_map="auto",
         trust_remote_code=True,
-        low_cpu_mem_usage=True,
-        use_cache=False
+        low_cpu_mem_usage=True
     )
 
     # check where model parameters are loaded.
