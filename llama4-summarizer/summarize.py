@@ -9,6 +9,7 @@
 #     "protobuf>=3.20.0",
 #     "spacy-layout>=0.0.12",
 #     "spacy>=3.7.0",
+#     "bitsandbytes>=0.41.0",
 # ]
 # ///
 """
@@ -52,11 +53,13 @@ def load_model(hf_token: str):
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         token=hf_token,
-        dtype=torch.bfloat16,
+        load_in_8bit=True,
         device_map="auto",
         trust_remote_code=True,
         low_cpu_mem_usage=True
     )
+
+    print(f"model loaded with 8-bit quantization to reduce memory usage.")
 
     # check where model parameters are loaded.
     print("\nmodel loaded successfully.")
