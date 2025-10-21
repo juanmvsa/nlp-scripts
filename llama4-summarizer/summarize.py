@@ -16,6 +16,7 @@ document summarization script using meta-llama/llama-4-maverick-17b-128e-instruc
 import argparse
 import sys
 from pathlib import Path
+from typing import List
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
@@ -54,24 +55,70 @@ def load_model(hf_token: str):
 
 def read_document(file_path: str) -> str:
     """
-    read the input document.
+    read the input document (txt, md, or pdf).
+
+    note: for pdf files, returns the file path as the model handles pdf parsing natively.
 
     args:
         file_path: path to the input document.
 
     returns:
-        document content as string.
+        document content as string, or file path for pdfs.
     """
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        return content
-    except FileNotFoundError:
+    file_path_obj = Path(file_path)
+
+    if not file_path_obj.exists():
         print(f"error: input file '{file_path}' not found.")
-        sys.exit(1)
+        return ""
+
+    try:
+        # for pdf files, return the path - model handles pdf parsing.
+        if file_path_obj.suffix.lower() == '.pdf':
+            return f"[PDF_FILE:{file_path}]"
+        else:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            return content
     except Exception as e:
         print(f"error reading file '{file_path}': {e}")
+        return ""
+
+
+def collect_files(input_path: str) -> List[Path]:
+    """
+    collect all supported files from input path (file or directory).
+
+    args:
+        input_path: path to file or directory.
+
+    returns:
+        list of path objects for supported files.
+    """
+    supported_extensions = {'.txt', '.md', '.pdf'}
+    path = Path(input_path)
+
+    if not path.exists():
+        print(f"error: input path '{input_path}' does not exist.")
         sys.exit(1)
+
+    files = []
+
+    if path.is_file():
+        if path.suffix.lower() in supported_extensions:
+            files.append(path)
+        else:
+            print(f"error: file '{path}' has unsupported extension. supported: {', '.join(supported_extensions)}")
+            sys.exit(1)
+    elif path.is_dir():
+        # recursively find all supported files.
+        for ext in supported_extensions:
+            files.extend(path.rglob(f"*{ext}"))
+
+        if not files:
+            print(f"error: no supported files found in directory '{input_path}'.")
+            sys.exit(1)
+
+    return sorted(files)
 
 
 def generate_summary(tokenizer, model, document: str) -> str:
@@ -150,6 +197,31 @@ def write_summary(output_path: str, summary: str):
         sys.exit(1)
 
 
+def generate_output_path(input_file: Path, output_path: str, base_input_path: Path) -> str:
+    """
+    generate output file path for a given input file.
+
+    args:
+        input_file: path to the input file.
+        output_path: user-specified output path.
+        base_input_path: base input path (file or directory).
+
+    returns:
+        output file path as string.
+    """
+    output = Path(output_path)
+
+    # if output is a directory or input is a directory, create structured output.
+    if base_input_path.is_dir() or output.is_dir() or output_path.endswith('/'):
+        # create relative path structure.
+        relative_path = input_file.relative_to(base_input_path.parent if base_input_path.is_file() else base_input_path)
+        output_file = output / relative_path.with_suffix('.txt')
+        return str(output_file)
+    else:
+        # single file output.
+        return output_path
+
+
 def main():
     """
     main function to parse arguments and run the summarization pipeline.
@@ -165,32 +237,51 @@ def main():
     )
 
     parser.add_argument(
-        "input_file",
+        "input",
         type=str,
-        help="path to the document to summarize."
+        help="path to the document or folder to summarize (supports txt, md, pdf files)."
     )
 
     parser.add_argument(
-        "output_file",
+        "output",
         type=str,
-        help="path and name of the output txt file."
+        help="path and name of the output txt file or directory for multiple summaries."
     )
 
     args = parser.parse_args()
 
+    # collect all files to process.
+    input_path = Path(args.input)
+    files_to_process = collect_files(args.input)
+
+    print(f"found {len(files_to_process)} file(s) to process.\n")
+
     # load the model and tokenizer.
     tokenizer, model = load_model(args.hf_token)
 
-    # read the input document.
-    document = read_document(args.input_file)
+    # process each file.
+    for i, file_path in enumerate(files_to_process, 1):
+        print(f"\n[{i}/{len(files_to_process)}] processing: {file_path}")
 
-    # generate the summary.
-    summary = generate_summary(tokenizer, model, document)
+        # read the document.
+        document = read_document(str(file_path))
 
-    # write the summary to the output file.
-    write_summary(args.output_file, summary)
+        if not document.strip():
+            print(f"warning: skipping empty or unreadable file: {file_path}")
+            continue
 
-    print("\nsummarization complete!")
+        # generate the summary.
+        summary = generate_summary(tokenizer, model, document)
+
+        # determine output path.
+        output_path = generate_output_path(file_path, args.output, input_path)
+
+        # write the summary.
+        write_summary(output_path, summary)
+
+    print("\n" + "="*50)
+    print(f"summarization complete! processed {len(files_to_process)} file(s).")
+    print("="*50)
 
 
 if __name__ == "__main__":
