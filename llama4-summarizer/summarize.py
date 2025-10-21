@@ -54,7 +54,9 @@ def load_model(hf_token: str):
         token=hf_token,
         torch_dtype=torch.bfloat16,
         device_map="auto",
-        trust_remote_code=True
+        trust_remote_code=True,
+        low_cpu_mem_usage=True,
+        use_cache=False
     )
 
     # check where model parameters are loaded.
@@ -194,8 +196,8 @@ please provide a comprehensive summary of the following document:
 
     print("generating summary...")
 
-    # tokenize the input.
-    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=8192)
+    # tokenize the input with reduced max length to save memory.
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=4096)
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
     # check inference device.
@@ -207,13 +209,18 @@ please provide a comprehensive summary of the following document:
 
     # generate the summary.
     with torch.no_grad():
+        # clear cuda cache before generation.
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
         outputs = model.generate(
             **inputs,
-            max_new_tokens=1024,
+            max_new_tokens=512,
             temperature=0.7,
             top_p=0.9,
             do_sample=True,
-            pad_token_id=tokenizer.eos_token_id
+            pad_token_id=tokenizer.eos_token_id,
+            use_cache=True
         )
 
     # decode the output.
