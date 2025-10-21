@@ -7,7 +7,7 @@
 #     "accelerate>=0.27.0",
 #     "sentencepiece>=0.2.0",
 #     "protobuf>=3.20.0",
-#     "spacy-layout>=0.1.0",
+#     "spacy-layout>=0.0.12",
 #     "spacy>=3.7.0",
 # ]
 # ///
