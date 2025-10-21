@@ -59,13 +59,27 @@ def load_model(hf_token: str):
     device_map = model.hf_device_map if hasattr(model, 'hf_device_map') else {}
     if device_map:
         devices = set(device_map.values())
-        for device in sorted(devices):
+        # separate devices by type for proper handling.
+        gpu_devices = []
+        cpu_devices = []
+        disk_devices = []
+
+        for device in devices:
             if isinstance(device, int) or (isinstance(device, str) and device.startswith('cuda')):
-                print(f"  ✓ gpu (cuda:{device if isinstance(device, int) else device.split(':')[1]})")
+                gpu_devices.append(device)
             elif device == 'cpu':
-                print(f"  ⚠ cpu (slower performance expected)")
+                cpu_devices.append(device)
             elif device == 'disk':
-                print(f"  ⚠ disk (significantly slower performance expected)")
+                disk_devices.append(device)
+
+        # display in priority order: gpu, cpu, disk.
+        for device in gpu_devices:
+            device_id = device if isinstance(device, int) else device.split(':')[1]
+            print(f"  ✓ gpu (cuda:{device_id})")
+        for device in cpu_devices:
+            print(f"  ⚠ cpu (slower performance expected)")
+        for device in disk_devices:
+            print(f"  ⚠ disk (significantly slower performance expected)")
     else:
         # fallback: check model device.
         model_device = next(model.parameters()).device
