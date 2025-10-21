@@ -13,7 +13,7 @@
 # ]
 # ///
 """
-document summarization script using meta-llama/llama-4-maverick-17b-128e-instruct.
+document summarization script using qwen/qwen3-30b-a3b-instruct-2507.
 """
 
 import argparse
@@ -28,7 +28,7 @@ from spacy_layout import spaCyLayout
 
 def load_model(hf_token: str):
     """
-    load the llama-4 model and tokenizer from huggingface.
+    load the qwen3-30b-a3b model and tokenizer from huggingface.
 
     args:
         hf_token: huggingface authentication token for gated model access.
@@ -36,7 +36,7 @@ def load_model(hf_token: str):
     returns:
         tuple of (tokenizer, model).
     """
-    model_name = "meta-llama/Llama-4-Maverick-17B-128E-Instruct"
+    model_name = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 
     print(f"loading model {model_name}...")
     print(f"cuda available: {torch.cuda.is_available()}")
@@ -50,13 +50,13 @@ def load_model(hf_token: str):
         trust_remote_code=True
     )
 
-    # configure 4-bit quantization (nf4) for maximum memory efficiency.
+    # configure 4-bit quantization (nf4) for memory efficiency.
+    # qwen3-30b-a3b should fit in 80gb gpu with 4-bit quantization.
     quantization_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.bfloat16,
-        llm_int8_enable_fp32_cpu_offload=True
+        bnb_4bit_compute_dtype=torch.bfloat16
     )
 
     # clear any existing cuda cache before loading.
@@ -69,11 +69,10 @@ def load_model(hf_token: str):
         quantization_config=quantization_config,
         device_map="auto",
         trust_remote_code=True,
-        low_cpu_mem_usage=True,
-        max_memory={0: "50GiB", "cpu": "200GiB"}
+        low_cpu_mem_usage=True
     )
 
-    print(f"model loaded with 4-bit nf4 quantization (~75% memory reduction).")
+    print(f"model loaded with 4-bit nf4 quantization.")
 
     # check where model parameters are loaded.
     print("\nmodel loaded successfully.")
@@ -189,26 +188,28 @@ def collect_files(input_path: str) -> List[Path]:
 
 def generate_summary(tokenizer, model, document: str) -> str:
     """
-    generate a summary of the document using the llama-4 model.
+    generate a summary of the document using the qwen3 model.
 
     args:
         tokenizer: the model tokenizer.
-        model: the llama-4 model.
+        model: the qwen3 model.
         document: the document content to summarize.
 
     returns:
         generated summary as string.
     """
-    # create the prompt for summarization.
-    prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+    # create the messages for summarization using qwen3 chat format.
+    messages = [
+        {"role": "system", "content": "you are a helpful assistant that creates concise and accurate summaries of documents."},
+        {"role": "user", "content": f"please provide a comprehensive summary of the following document:\n\n{document}"}
+    ]
 
-you are a helpful assistant that creates concise and accurate summaries of documents.<|eot_id|><|start_header_id|>user<|end_header_id|>
-
-please provide a comprehensive summary of the following document:
-
-{document}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
-"""
+    # apply chat template to format the prompt correctly.
+    prompt = tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True
+    )
 
     print("generating summary...")
 
@@ -242,11 +243,12 @@ please provide a comprehensive summary of the following document:
     # decode the output.
     full_response = tokenizer.decode(outputs[0], skip_special_tokens=False)
 
-    # extract only the assistant's response.
-    if "<|start_header_id|>assistant<|end_header_id|>" in full_response:
-        summary = full_response.split("<|start_header_id|>assistant<|end_header_id|>")[-1]
-        summary = summary.replace("<|eot_id|>", "").replace("<|end_of_text|>", "").strip()
+    # extract only the assistant's response for qwen3.
+    if "<|im_start|>assistant" in full_response:
+        summary = full_response.split("<|im_start|>assistant")[-1]
+        summary = summary.replace("<|im_end|>", "").strip()
     else:
+        # fallback to clean decoding.
         summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
         summary = summary[len(prompt):].strip()
 
@@ -294,9 +296,9 @@ def generate_output_path(input_file: Path, output_path: str, base_input_path: Pa
         # create relative path structure.
         relative_path = input_file.relative_to(base_input_path.parent if base_input_path.is_file() else base_input_path)
 
-        # generate new filename: originalname_llama4_maverick_summary.txt.
+        # generate new filename: originalname_qwen3_summary.txt.
         original_stem = input_file.stem
-        new_filename = f"{original_stem}_llama4_maverick_summary.txt"
+        new_filename = f"{original_stem}_qwen3_summary.txt"
 
         # maintain directory structure but use new filename.
         output_file = output / relative_path.parent / new_filename
@@ -311,7 +313,7 @@ def main():
     main function to parse arguments and run the summarization pipeline.
     """
     parser = argparse.ArgumentParser(
-        description="summarize documents using meta-llama/llama-4-maverick-17b-128e-instruct."
+        description="summarize documents using qwen/qwen3-30b-a3b-instruct-2507."
     )
 
     parser.add_argument(
