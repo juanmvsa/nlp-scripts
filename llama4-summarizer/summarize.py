@@ -7,6 +7,8 @@
 #     "accelerate>=0.27.0",
 #     "sentencepiece>=0.2.0",
 #     "protobuf>=3.20.0",
+#     "spacy-layout>=0.1.0",
+#     "spacy>=3.7.0",
 # ]
 # ///
 """
@@ -19,6 +21,8 @@ from pathlib import Path
 from typing import List
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+import spacy
+from spacy_layout import spaCyLayout
 
 
 def load_model(hf_token: str):
@@ -95,13 +99,13 @@ def read_document(file_path: str) -> str:
     """
     read the input document (txt, md, or pdf).
 
-    note: for pdf files, returns the file path as the model handles pdf parsing natively.
+    note: for pdf files, uses spacy-layout to extract text.
 
     args:
         file_path: path to the input document.
 
     returns:
-        document content as string, or file path for pdfs.
+        document content as string.
     """
     file_path_obj = Path(file_path)
 
@@ -110,9 +114,15 @@ def read_document(file_path: str) -> str:
         return ""
 
     try:
-        # for pdf files, return the path - model handles pdf parsing.
+        # for pdf files, use spacy-layout to extract text.
         if file_path_obj.suffix.lower() == '.pdf':
-            return f"[PDF_FILE:{file_path}]"
+            print(f"  extracting text from pdf using spacy-layout...")
+            nlp = spacy.blank("en")
+            layout = spaCyLayout(nlp)
+            doc = layout(file_path)
+            content = doc.text
+            print(f"  extracted {len(content)} characters from pdf.")
+            return content
         else:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
