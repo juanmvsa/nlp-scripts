@@ -34,6 +34,10 @@ def load_model(hf_token: str):
     model_name = "meta-llama/Llama-4-Maverick-17B-128E-Instruct"
 
     print(f"loading model {model_name}...")
+    print(f"cuda available: {torch.cuda.is_available()}")
+    if torch.cuda.is_available():
+        print(f"gpu device: {torch.cuda.get_device_name(0)}")
+        print(f"gpu memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} gb")
 
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
@@ -49,7 +53,27 @@ def load_model(hf_token: str):
         trust_remote_code=True
     )
 
-    print("model loaded successfully.")
+    # check where model parameters are loaded.
+    print("\nmodel loaded successfully.")
+    print("\nmodel device allocation:")
+    device_map = model.hf_device_map if hasattr(model, 'hf_device_map') else {}
+    if device_map:
+        devices = set(device_map.values())
+        for device in sorted(devices):
+            if isinstance(device, int) or (isinstance(device, str) and device.startswith('cuda')):
+                print(f"  ✓ gpu (cuda:{device if isinstance(device, int) else device.split(':')[1]})")
+            elif device == 'cpu':
+                print(f"  ⚠ cpu (slower performance expected)")
+            elif device == 'disk':
+                print(f"  ⚠ disk (significantly slower performance expected)")
+    else:
+        # fallback: check model device.
+        model_device = next(model.parameters()).device
+        if model_device.type == 'cuda':
+            print(f"  ✓ gpu ({model_device})")
+        else:
+            print(f"  ⚠ {model_device.type}")
+
     return tokenizer, model
 
 
@@ -149,6 +173,13 @@ please provide a comprehensive summary of the following document:
     # tokenize the input.
     inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=8192)
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
+
+    # check inference device.
+    inference_device = inputs['input_ids'].device
+    if inference_device.type == 'cuda':
+        print(f"  ✓ running inference on gpu ({inference_device})")
+    else:
+        print(f"  ⚠ running inference on {inference_device.type} (slower performance expected)")
 
     # generate the summary.
     with torch.no_grad():
