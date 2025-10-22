@@ -227,13 +227,14 @@ def generate_summary(tokenizer, model, document: str) -> str:
 
     print("generating summary...")
 
-    # tokenize the input with reduced max length to save memory.
-    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=4096)
+    # tokenize the input - qwen3 supports up to 262k context, use 32k for reasonable performance.
+    max_input_length = 32768
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=max_input_length)
     input_length = inputs['input_ids'].shape[1]
-    print(f"  input tokens: {input_length} (max: 4096)")
+    print(f"  input tokens: {input_length} (max: {max_input_length})")
 
-    if input_length >= 4095:
-        print(f"  ⚠ warning: input was truncated! original document may be too long.")
+    if input_length >= max_input_length - 1:
+        print(f"  ⚠ warning: input was truncated! document exceeds {max_input_length} tokens.")
 
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
