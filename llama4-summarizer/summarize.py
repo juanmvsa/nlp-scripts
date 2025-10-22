@@ -253,7 +253,7 @@ def generate_summary(tokenizer, model, document: str) -> str:
 
         outputs = model.generate(
             **inputs,
-            max_new_tokens=512,
+            max_new_tokens=2048,
             temperature=0.7,
             top_p=0.9,
             do_sample=True,
