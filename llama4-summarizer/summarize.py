@@ -134,18 +134,32 @@ def read_document(file_path: str) -> str:
         # for pdf files, use spacy-layout to extract text.
         if file_path_obj.suffix.lower() == '.pdf':
             print(f"  extracting text from pdf using spacy-layout...")
-            nlp = spacy.blank("en")
-            layout = spaCyLayout(nlp)
-            doc = layout(file_path)
-            content = doc.text
-            print(f"  extracted {len(content)} characters from pdf.")
-            return content
+            try:
+                nlp = spacy.blank("en")
+                layout = spaCyLayout(nlp)
+                doc = layout(file_path)
+                content = doc.text
+
+                if not content or len(content.strip()) == 0:
+                    print(f"  warning: pdf extraction returned empty content!")
+                    return ""
+
+                print(f"  extracted {len(content)} characters from pdf.")
+                print(f"  first 200 chars: {content[:200]}")
+                return content
+            except Exception as pdf_error:
+                print(f"  error extracting pdf text: {pdf_error}")
+                import traceback
+                traceback.print_exc()
+                return ""
         else:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
             return content
     except Exception as e:
         print(f"error reading file '{file_path}': {e}")
+        import traceback
+        traceback.print_exc()
         return ""
 
 
@@ -215,6 +229,12 @@ def generate_summary(tokenizer, model, document: str) -> str:
 
     # tokenize the input with reduced max length to save memory.
     inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=4096)
+    input_length = inputs['input_ids'].shape[1]
+    print(f"  input tokens: {input_length} (max: 4096)")
+
+    if input_length >= 4095:
+        print(f"  ⚠ warning: input was truncated! original document may be too long.")
+
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
     # check inference device.
@@ -242,6 +262,8 @@ def generate_summary(tokenizer, model, document: str) -> str:
 
     # decode the output.
     full_response = tokenizer.decode(outputs[0], skip_special_tokens=False)
+    output_length = outputs[0].shape[0]
+    print(f"  generated {output_length} tokens")
 
     # extract only the assistant's response for qwen3.
     if "<|im_start|>assistant" in full_response:
@@ -249,10 +271,15 @@ def generate_summary(tokenizer, model, document: str) -> str:
         summary = summary.replace("<|im_end|>", "").strip()
     else:
         # fallback to clean decoding.
+        print(f"  ⚠ warning: expected qwen3 format not found, using fallback parsing")
         summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
         summary = summary[len(prompt):].strip()
 
-    print("summary generated successfully.")
+    if not summary or len(summary.strip()) == 0:
+        print(f"  ⚠ warning: generated summary is empty!")
+        print(f"  full response preview: {full_response[:500]}")
+
+    print(f"summary generated successfully. length: {len(summary)} characters")
     return summary
 
 
@@ -358,6 +385,12 @@ def main():
 
         # generate the summary.
         summary = generate_summary(tokenizer, model, document)
+
+        # check if summary is valid before writing.
+        if not summary or len(summary.strip()) == 0:
+            print(f"⚠ error: failed to generate valid summary for {file_path}")
+            print(f"  skipping file and continuing with next...")
+            continue
 
         # determine output path.
         output_path = generate_output_path(file_path, args.output, input_path)
